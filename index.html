@@ -1,0 +1,273 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Eco Battle: Siapa Pemangsa?</title>
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;font-weight:700;color:#173a22;background:#0e3b24}
+button{font:inherit;cursor:pointer;min-height:48px;min-width:48px;border:0;border-radius:24px;padding:0 18px;background:#ffd24a;color:#4a2f10;box-shadow:0 3px 0 #b8861a}
+button:active{transform:translateY(2px)}button.s{background:#fff;box-shadow:0 3px 0 #8aa}button.big{font-size:1.4rem;padding:0 34px;min-height:60px;background:#ff9f1c}
+input[type=text]{font:inherit;min-height:48px;border-radius:14px;border:3px solid #4caf50;padding:0 12px;width:100%}
+#cam{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);opacity:0;z-index:0}
+body.cam #cam{opacity:1}
+.scr{position:fixed;inset:0;z-index:5}.hide{display:none!important}
+#home{overflow:auto;background:linear-gradient(#8fd3f4,#cdf0c4 55%,#3f9a57);padding:10px;text-align:center}
+body.cam #home{background:rgba(8,40,24,.62);color:#fff}
+.wrap{max-width:860px;margin:auto}h1{font-size:clamp(1.8rem,6vw,3.2rem);color:#1b6b34;text-shadow:0 2px 0 #fff}body.cam h1{color:#ffe066;text-shadow:0 2px 4px #000}
+.tag{font-size:1.2rem;margin:4px 0}.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0;align-items:end}.row label{flex:1;min-width:150px;text-align:left}
+.stat{min-height:24px}.guide{text-align:left;max-width:560px;margin:6px auto;padding-left:24px;background:rgba(255,255,255,.75);color:#173a22;border-radius:14px;padding:10px 10px 10px 34px}
+.note{font-size:.85rem;opacity:.85;margin:8px 0}
+#arena{display:flex;z-index:2;background:none}
+.panel{flex:1;min-width:0;position:relative;display:flex;flex-direction:column;padding:4px 8px;--c1:#2f9e44}.panel.b{--c1:#1c88a8}.panel.g{border-right:3px solid rgba(255,255,255,.7)}
+.branch{position:absolute;left:0;top:0;width:100%;height:44px;pointer-events:none;z-index:1}
+.hd{position:relative;z-index:2;margin-top:16px;display:grid;grid-template-columns:1fr auto auto;gap:2px 10px;align-items:center;background:rgba(10,45,25,.6);color:#fff;border-radius:12px;padding:4px 10px;font-size:clamp(12px,2.2vh,20px)}
+.hd .sc{font-size:1.5em;color:#ffe066}.hp{grid-column:1/3;height:12px;background:rgba(255,255,255,.3);border-radius:6px;overflow:hidden}.hp i{display:block;height:100%;width:100%;background:#7bd54a;transition:width .35s}
+.tm{display:none}.tm.low{color:#ff7b5c}
+.qc{position:relative;z-index:2;margin-top:6px;background:rgba(255,255,255,.93);border-radius:14px;padding:6px 12px;border:3px solid #8d6e3f}.qc.qin{animation:qin .3s}@keyframes qin{from{opacity:0;transform:translateY(-8px)}}
+.meta{font-size:.75rem;color:#6b4423}.qt{font-size:clamp(14px,2.7vh,26px);line-height:1.2}.rd{display:flex;gap:6px;margin-top:4px}.rd button{min-height:48px;font-size:.8rem;padding:0 12px}
+.zone{position:relative;flex:1;overflow:hidden;margin-top:4px;z-index:2}
+.leaf{position:absolute;width:30%;height:21%;will-change:transform;touch-action:manipulation}
+.lf{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 4px 4px rgba(0,0,0,.35))}.f{fill:var(--c1)}.v{stroke:rgba(255,255,255,.35);stroke-width:2;fill:none}
+.lx{position:absolute;left:-14%;right:-14%;top:-18%;bottom:-18%;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font-size:clamp(15px,3vh,30px);line-height:1.08;-webkit-text-stroke:5px rgba(0,35,12,.9);paint-order:stroke fill;text-shadow:0 2px 4px #000}
+.lt{position:absolute;left:4%;top:-8%;z-index:2;background:#fff;color:#1b5e20;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:15px}
+.ring{position:absolute;right:-6%;top:-12%;z-index:3;width:42px;height:42px;margin-top:0;transform:rotate(-90deg);opacity:0}.ring circle{fill:rgba(0,0,0,.4);stroke:#ffe066;stroke-width:5;stroke-dasharray:113.1;stroke-dashoffset:113.1}
+.leaf.good .f{fill:#e0b400}.leaf.good .lx{color:#3a2a00;-webkit-text-stroke:5px #fff8cc;text-shadow:none}.leaf.good .lf{filter:drop-shadow(0 0 14px #ffe066)}.leaf.bad .f{fill:#e08a00}.leaf.bad .lf{animation:wob .7s}
+@keyframes wob{25%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}75%{transform:rotate(-3deg)}}
+.fb{position:absolute;left:1%;right:1%;bottom:0;min-height:26%;max-height:30%;overflow:auto;background:rgba(255,248,225,.95);border-radius:12px;padding:6px 10px;font-size:clamp(12px,2.2vh,19px);display:flex;gap:8px;align-items:center;color:#3b2a10}.fb button{flex:none}
+.st{position:relative;z-index:2;font-size:.75rem;color:#fff;text-shadow:0 1px 3px #000;min-height:18px}
+#ctl{position:fixed;top:2px;left:50%;transform:translateX(-50%);z-index:25;display:flex;gap:4px}#ctl button{min-height:48px;font-size:.75rem;padding:0 10px}
+#ptrs i{position:fixed;width:26px;height:26px;margin:-13px;border-radius:50%;border:4px solid #fff;z-index:30;pointer-events:none;display:none;background:rgba(255,224,102,.6)}#ptrs i+i{background:rgba(120,210,255,.6)}
+#count{z-index:40;display:flex;align-items:center;justify-content:center;font-size:12rem;color:#ffe066;text-shadow:0 6px 0 #1b6b34,0 0 30px #000;background:rgba(0,30,15,.35)}
+#pz,#rot{z-index:50;background:rgba(5,30,15,.85);color:#fff;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;text-align:center;padding:20px}
+#rot{display:none;inset:auto 0 0 0;padding:6px;font-size:.85rem;z-index:45;background:#b8561a}
+@media(orientation:portrait) and (max-width:700px){#rot{display:block}}
+#toast{position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:60;background:#fff8e1;color:#5a3b00;border:3px solid #ffb300;border-radius:14px;padding:8px 14px;max-width:90vw;display:none}
+#result{overflow:auto;background:linear-gradient(#bde9ff,#d7f5c9 60%,#4fa968);text-align:center;padding:12px}
+.cards{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.card{background:#fff;border-radius:18px;padding:12px 16px;min-width:260px;border:5px solid #aaa}.card.w{border-color:#ffc400;box-shadow:0 0 24px #ffe066}
+.badge{display:inline-block;background:#3fa34d;color:#fff;border-radius:0 90% 0 90%;padding:10px 22px;font-size:1.3rem;margin:6px}.sum{background:rgba(255,255,255,.8);border-radius:14px;padding:8px 14px;margin:10px auto;max-width:640px;text-align:left}
+.pt{position:fixed;width:12px;height:12px;border-radius:0 100% 0 100%;background:#8bd450;z-index:40;pointer-events:none;animation:fly .8s ease-out forwards}@keyframes fly{to{transform:translate(var(--dx),var(--dy)) rotate(260deg);opacity:0}}
+.cf{position:fixed;top:-24px;width:16px;height:16px;border-radius:0 100% 0 100%;z-index:3;pointer-events:none;animation:fall linear infinite}@keyframes fall{to{transform:translateY(112vh) rotate(540deg)}}
+body.rm .pt,body.rm .cf{display:none}
+</style></head><body>
+<video id="cam" autoplay playsinline muted></video>
+
+<!-- ========== BERANDA ========== -->
+<div id="home" class="scr"><div class="wrap">
+<h1>Eco Battle: Siapa Pemangsa?</h1><p class="tag">Tunjuk Daunnya, Temukan Jawabannya!</p>
+<svg viewBox="0 0 520 170" width="100%" style="max-width:520px" aria-label="Pohon dan rantai makanan">
+<rect x="0" y="140" width="520" height="30" fill="#3f9a57" rx="10"/><rect x="40" y="60" width="22" height="90" fill="#7a4e24"/>
+<circle cx="50" cy="48" r="38" fill="#2f9e44"/><circle cx="25" cy="64" r="26" fill="#3fb653"/><circle cx="78" cy="62" r="26" fill="#27883a"/>
+<g fill="#4cc35f"><path d="M130 140q4-30 10-34q2 20-10 34zM138 140q10-24 20-26q-4 18-20 26z"/></g>
+<ellipse cx="205" cy="128" rx="20" ry="9" fill="#9acd32"/><circle cx="222" cy="122" r="6" fill="#9acd32"/><circle cx="224" cy="120" r="2" fill="#000"/>
+<ellipse cx="305" cy="126" rx="24" ry="14" fill="#5cb85c"/><circle cx="322" cy="116" r="9" fill="#5cb85c"/><circle cx="325" cy="113" r="3" fill="#fff"/><circle cx="326" cy="113" r="1.5" fill="#000"/>
+<path d="M380 138q20-30 40-8t40-8" stroke="#8d6e3f" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="462" cy="124" r="2.5" fill="#000"/>
+<path d="M430 40q30-24 60 0q-30-8-60 0z" fill="#6b4423"/><circle cx="460" cy="46" r="6" fill="#6b4423"/>
+<g stroke="#ffb300" stroke-width="3" fill="none"><path d="M160 125h25M245 125h35M345 125h30M450 90v-20"/></g></svg>
+<div class="row"><label>Nama Tim Kiri<input type="text" id="n0" value="Tim Hijau" maxlength="16"></label><label>Nama Tim Kanan<input type="text" id="n1" value="Tim Biru" maxlength="16"></label></div>
+<div class="row"><button class="s" id="bCam">Cek Kamera</button><button class="s" id="bTest">Uji Gesture</button><button class="s" id="bMus">Aktifkan Musik</button></div>
+<div class="row"><label><input type="checkbox" id="cAuto"> Bacakan soal otomatis</label><label><input type="checkbox" id="cRm"> Kurangi gerakan</label></div>
+<p class="stat" id="stat">Status: belum ada pengecekan.</p>
+<ol class="guide"><li>Tim kiri berdiri di sisi kiri kamera, tim kanan di sisi kanan.</li><li>Tunjuk satu daun dengan ujung jari telunjuk.</li><li>Tahan <b>3 detik</b> tanpa bergeser sampai lingkaran penuh. Jawaban terkunci otomatis.</li></ol>
+<div class="row"><button class="big" id="bGo">MULAI BATTLE!</button><button class="s" id="bTouch">Main dengan Sentuhan</button></div>
+<p class="note">Pelacakan tangan memakai MediaPipe (pustaka dan model dimuat dari internet). Tanpa internet/kamera, game otomatis memakai mode sentuh.</p>
+</div></div>
+
+<div id="arena" class="scr hide"></div><div id="ptrs"><i></i><i></i></div>
+<div id="ctl" class="hide"><button class="s" id="cP">Jeda</button><button class="s" id="cM">Musik</button><button class="s" id="cA">Baca Otomatis</button></div>
+<div id="count" class="scr hide"></div>
+<div id="pz" class="scr hide"><h2>Permainan dijeda</h2><button id="zR">Lanjutkan</button><button class="s" id="zS">Ulangi dari Awal</button><button class="s" id="zX">Keluar ke Beranda</button></div>
+<div id="result" class="scr hide"></div><div id="rot">Putar perangkat ke mode landscape agar dua arena terlihat jelas.</div><div id="toast"></div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+/* ================= QUESTIONS_DATA =================
+ [id, kategori, tingkat(0 mudah,1 sedang,2 sulit), soal, jawaban benar, [3 pengecoh], pembahasan] */
+const QUESTIONS_DATA={
+hijau:[
+["H01","Produsen",0,"Tumbuhan hijau disebut produsen karena ...","membuat makanan sendiri lewat fotosintesis",["memakan hewan kecil","menguraikan sisa makhluk hidup","hanya meminum air hujan"],"Tumbuhan hijau membuat makanan sendiri dengan bantuan cahaya matahari."],
+["H02","Produsen",0,"Manakah yang termasuk produsen?","Padi",["Kucing","Elang","Ular"],"Padi merupakan produsen karena membuat makanan sendiri melalui fotosintesis."],
+["H03","Konsumen",0,"Sapi memakan rumput. Sapi termasuk ...","herbivora (pemakan tumbuhan)",["karnivora (pemakan daging)","produsen","tumbuhan hijau"],"Hewan pemakan tumbuhan disebut herbivora, dan ia menjadi konsumen."],
+["H04","Predator",0,"Hewan yang berburu dan memakan hewan lain disebut ...","predator",["mangsa","produsen","tumbuhan"],"Predator adalah pemburu. Hewan yang diburu disebut mangsa."],
+["H05","Predator",0,"Elang memakan kelinci. Dalam hubungan itu, kelinci berperan sebagai ...","mangsa",["predator","produsen","matahari"],"Kelinci dimakan elang, jadi kelinci adalah mangsa."],
+["H06","Urutan",1,"Urutan rantai makanan yang benar adalah ...","rumput → belalang → katak → ular",["belalang → rumput → katak → ular","rumput → katak → belalang → ular","ular → katak → belalang → rumput"],"Rantai dimulai dari produsen (rumput), lalu dimakan belalang, katak, dan ular."],
+["H07","Hubungan",1,"Pada rantai daun → ulat → burung kecil → elang, siapa pemangsa burung kecil?","elang",["ulat","daun","tidak ada"],"Anak panah menunjuk ke pemakan. Burung kecil dimakan oleh elang."],
+["H08","Konsumen",1,"Pada rantai padi → tikus → ular, siapa konsumen tingkat pertama?","tikus",["padi","ular","matahari"],"Konsumen tingkat pertama memakan produsen. Tikus memakan padi."],
+["H09","Produsen",1,"Pada rantai alga → udang → ikan kecil → ikan besar, siapa produsennya?","alga",["udang","ikan kecil","ikan besar"],"Alga membuat makanan sendiri, sehingga menjadi produsen."],
+["H10","Hubungan",1,"Pada rantai rumput → rusa → harimau, rusa dimakan oleh ...","harimau",["rumput","air hujan","tanah"],"Harimau adalah predator yang memakan rusa."],
+["H11","Energi",2,"Anak panah dalam rantai makanan menunjukkan arah ...","perpindahan energi",["arah angin","arah lari mangsa","arah terbit matahari"],"Anak panah menunjukkan energi berpindah dari yang dimakan ke yang memakan."],
+["H12","Energi",2,"Sumber energi utama hampir semua rantai makanan adalah ...","cahaya matahari",["tanah","air hujan","hewan pemangsa"],"Tumbuhan mengubah energi cahaya matahari menjadi makanan, lalu energi berpindah ke hewan."],
+["H13","Populasi",2,"Jika semua ular di sawah punah, apa yang mungkin terjadi pada tikus?","jumlah tikus bertambah banyak",["jumlah tikus berkurang","jumlah tikus tidak berubah","tikus berubah menjadi ular"],"Tanpa pemangsa, populasi tikus dapat meningkat dan merusak padi."],
+["H14","Populasi",2,"Rumput di padang mengering parah. Apa dampaknya bagi rusa?","populasi rusa dapat menurun",["populasi rusa pasti naik","populasi rusa tetap sama","rusa menjadi pemakan daging"],"Makanan rusa berkurang, sehingga banyak rusa kelaparan dan jumlahnya turun."],
+["H15","Energi",2,"Pada rantai rumput → belalang → katak → ular, energi terbanyak ada pada ...","rumput",["belalang","katak","ular"],"Energi berkurang di setiap tingkat, jadi produsen memiliki energi terbanyak."]],
+biru:[
+["B01","Produsen",0,"Tumbuhan membutuhkan ... untuk membuat makanan sendiri.","sinar matahari",["daging mangsa","tulang hewan","kotoran hewan"],"Fotosintesis memerlukan sinar matahari, air, dan udara."],
+["B02","Konsumen",0,"Manakah yang termasuk konsumen?","Kambing",["Rumput","Pohon mangga","Bayam"],"Kambing tidak membuat makanan sendiri, jadi ia konsumen."],
+["B03","Konsumen",0,"Hewan pemakan daging disebut ...","karnivora",["herbivora","omnivora","produsen"],"Karnivora memakan daging, misalnya singa dan harimau."],
+["B04","Predator",0,"Singa berburu zebra. Singa berperan sebagai ...","predator",["mangsa","produsen","tumbuhan"],"Singa memburu zebra, jadi singa adalah predator."],
+["B05","Konsumen",0,"Ayam makan biji-bijian dan juga cacing. Ayam disebut ...","omnivora",["herbivora","karnivora","produsen"],"Omnivora memakan tumbuhan sekaligus hewan."],
+["B06","Urutan",1,"Susunan rantai makanan yang benar adalah ...","padi → tikus → ular → elang",["tikus → padi → ular → elang","padi → ular → tikus → elang","elang → ular → tikus → padi"],"Mulai dari produsen padi, lalu tikus, ular, dan elang."],
+["B07","Hubungan",1,"Pada rantai kol → ulat → katak → ular, siapa pemangsa katak?","ular",["ulat","kol","tidak ada"],"Ular memakan katak, sehingga ular adalah pemangsanya."],
+["B08","Konsumen",1,"Pada rantai jagung → ayam → musang, ayam berperan sebagai ...","konsumen yang dimakan musang",["produsen jagung","predator puncak","pembuat makanan sendiri"],"Ayam memakan jagung (konsumen) dan menjadi mangsa musang."],
+["B09","Predator",1,"Pada rantai bunga → kupu-kupu → laba-laba → burung, siapa predator paling akhir?","burung",["bunga","kupu-kupu","laba-laba"],"Burung memakan laba-laba dan tidak dimakan oleh hewan lain dalam rantai ini."],
+["B10","Hubungan",1,"Pada rantai selada → siput → bebek, bebek memakan ...","siput",["selada","ulat","tanah"],"Anak panah dari siput menuju bebek, artinya bebek memakan siput."],
+["B11","Energi",2,"Energi yang diteruskan ke tingkat berikutnya dalam rantai makanan jumlahnya ...","makin berkurang",["makin bertambah","selalu sama","berhenti di produsen"],"Sebagian energi dipakai untuk hidup dan hilang sebagai panas."],
+["B12","Energi",2,"Mengapa tumbuhan hijau menjadi sumber energi awal bagi hewan?","mengubah energi cahaya menjadi makanan",["memakan hewan kecil","menyimpan daging di daun","menghasilkan panas dari tanah"],"Hewan memperoleh energi dari tumbuhan yang menyimpan energi matahari sebagai makanan."],
+["B13","Populasi",2,"Jika elang di hutan berkurang banyak, apa dampaknya bagi burung kecil?","jumlahnya dapat meningkat",["jumlahnya pasti menurun","tidak mungkin berubah","berubah menjadi produsen"],"Pemangsanya sedikit, sehingga populasi burung kecil dapat naik."],
+["B14","Populasi",2,"Katak banyak diburu manusia hingga berkurang. Apa dampaknya bagi serangga?","populasi serangga dapat meningkat",["serangga ikut berkurang","serangga berubah jadi produsen","tidak ada dampak"],"Katak memakan serangga. Tanpa katak, serangga bertambah dan dapat merusak tanaman."],
+["B15","Energi",2,"Pada rantai fitoplankton → ikan kecil → ikan besar, yang jumlahnya biasanya paling banyak adalah ...","fitoplankton",["ikan kecil","ikan besar","jumlahnya sama"],"Energi menyusut ke atas, jadi produsen paling banyak dan pemangsa puncak paling sedikit."]]};
+
+/* ================= STATE ================= */
+const G={phase:"home",mode:"touch",teams:[],paused:false,auto:false,reduce:matchMedia("(prefers-reduced-motion:reduce)").matches,timers:[]};
+const TS={stream:null,cam:false,lm:null,loading:null,test:false,lastT:-1,ptr:[{x:0,y:0,t:-1e9},{x:0,y:0,t:-1e9}]}; // TRACKING_STATE
+const AU={ctx:null,on:false,timer:null,n:0};                                 // AUDIO_STATE
+const TT={ok:"speechSynthesis" in window,voice:null,q:[],cur:null,warned:false};
+const LV=["Mudah","Sedang","Sulit"],TOTAL=15,TIME=20;
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function toast(m,ms=5500){const t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display="none",ms)}
+const setStat=m=>$("#stat").textContent="Status: "+m;
+
+/* ================= AUDIO ================= */
+function auInit(){if(AU.ctx)return;const C=window.AudioContext||window.webkitAudioContext;if(!C)return;AU.ctx=new C();AU.master=AU.ctx.createGain();AU.master.gain.value=.25;AU.master.connect(AU.ctx.destination);AU.mus=AU.ctx.createGain();AU.mus.gain.value=.4;AU.mus.connect(AU.master);AU.sfx=AU.ctx.createGain();AU.sfx.gain.value=.8;AU.sfx.connect(AU.master)}
+function tone(f,t0,d,type,v,dest){const c=AU.ctx,o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(v,t0+.04);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.connect(g);g.connect(dest);o.start(t0);o.stop(t0+d+.05)}
+/* Backsound safari orisinal: marimba + bass + pad akor + shaker + kick lembut + kicau burung (tempo ~125 bpm) */
+const CH=[[261.6,329.6,392],[220,261.6,329.6],[174.6,220,261.6],[196,246.9,293.7]],BS=[65.4,55,43.65,49],PT=[0,2,4,7,9,12,14,16,19];
+const MEL=[4,-1,5,4,2,-1,3,2,4,-1,2,0,1,2,-1,-1,3,-1,4,3,1,-1,2,1,0,1,2,4,2,-1,-1,-1];
+function noise(t,d,v,f){const c=AU.ctx;if(!AU.nb){AU.nb=c.createBuffer(1,c.sampleRate*.2,c.sampleRate);const a=AU.nb.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1}
+ const s=c.createBufferSource(),h=c.createBiquadFilter(),g=c.createGain();s.buffer=AU.nb;h.type="highpass";h.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(h);h.connect(g);g.connect(AU.mus);s.start(t);s.stop(t+d)}
+function kick(t){const c=AU.ctx,o=c.createOscillator(),g=c.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(45,t+.15);g.gain.setValueAtTime(.7,t);g.gain.exponentialRampToValueAtTime(.001,t+.22);o.connect(g);g.connect(AU.mus);o.start(t);o.stop(t+.25)}
+function chirp(t){const c=AU.ctx;[0,.14].forEach(d=>{const o=c.createOscillator(),g=c.createGain();o.frequency.setValueAtTime(2400,t+d);o.frequency.exponentialRampToValueAtTime(3400,t+d+.09);g.gain.setValueAtTime(.12,t+d);g.gain.exponentialRampToValueAtTime(.001,t+d+.11);o.connect(g);g.connect(AU.mus);o.start(t+d);o.stop(t+d+.12)})}
+function step(t,n){const k=n%32,bar=Math.floor(k/8)%4,b=k%8,ch=CH[bar];
+ if(b===0){ch.forEach(f=>tone(f,t,1.9,"sine",.16,AU.mus));kick(t)}if(b===4)kick(t);
+ if(b===0||b===3||b===6)tone(BS[bar],t,.4,"triangle",.55,AU.mus);if(b===4)tone(BS[bar]*1.5,t,.3,"triangle",.4,AU.mus);
+ noise(t,.05,b%2?.12:.06,6000);if(b===2||b===6)noise(t+.12,.04,.08,6000); // shaker
+ const d=MEL[k];if(d>=0){const f=523.25*2**(PT[d]/12);tone(f,t,.4,"sine",.5,AU.mus);tone(f*2,t,.15,"triangle",.12,AU.mus)} // marimba
+ if(k===30)chirp(t)}
+function sched(){const c=AU.ctx;if(c.state==="suspended")c.resume();while(AU.next<c.currentTime+.3){step(AU.next,AU.n++);AU.next+=.24}}
+function music(on){auInit();if(!AU.ctx)return toast("Audio tidak didukung browser ini.");AU.on=on;clearInterval(AU.timer);if(on){AU.n=0;AU.next=AU.ctx.currentTime+.1;AU.timer=setInterval(sched,60)}
+ $("#bMus").textContent=on?"Matikan Musik":"Aktifkan Musik";$("#cM").textContent=on?"Musik: Hidup":"Musik: Mati"}
+function duck(d){if(AU.ctx)AU.mus.gain.setTargetAtTime(d?.1:.4,AU.ctx.currentTime,.2)}
+function sfx(k){if(!AU.ctx)return;const t=AU.ctx.currentTime+.02,s=AU.sfx;
+ if(k==="ok")[523,659,784].forEach((f,i)=>tone(f,t+i*.1,.4,"sine",.5,s));
+ else if(k==="bad"){tone(300,t,.35,"triangle",.5,s);tone(240,t+.15,.4,"triangle",.5,s)}
+ else if(k==="to")tone(200,t,.5,"triangle",.5,s);
+ else if(k==="win")[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,t+i*.18,.7,"sine",.4,s))}
+
+/* ================= PEMBACA SOAL (antrean: satu suara pada satu waktu) ================= */
+function pickVoice(){if(!TT.ok)return;TT.voice=speechSynthesis.getVoices().find(v=>/^id/i.test(v.lang))||null}
+if(TT.ok){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function say(t,text){if(!TT.ok||!TT.voice){if(!TT.warned){TT.warned=true;toast("Suara Bahasa Indonesia tidak tersedia di perangkat ini. Soal tetap bisa dibaca di layar.")}return}
+ cancelRead(t);t.reading=true;t.rt=0;TT.q.push({t,text});pump()}
+function pump(){if(TT.cur||!TT.q.length)return;const it=TT.cur=TT.q.shift(),u=new SpeechSynthesisUtterance(it.text);u.lang="id-ID";u.voice=TT.voice;u.rate=.88;u.pitch=1.1;
+ const end=()=>{if(it.done)return;it.done=true;TT.cur=null;if(!TT.q.some(x=>x.t===it.t))it.t.reading=false;if(!TT.q.length)duck(false);pump()};
+ it.end=end;u.onend=end;u.onerror=end;duck(true);try{speechSynthesis.speak(u)}catch(e){end()}}
+function cancelRead(t){TT.q=TT.q.filter(x=>x.t!==t);if(TT.cur&&TT.cur.t===t){try{speechSynthesis.cancel()}catch(e){}TT.cur.end()}t.reading=false}
+function readAll(){TT.q=[];if(TT.cur){const c=TT.cur;try{speechSynthesis.cancel()}catch(e){}c.done=true;TT.cur=null}G.teams.forEach(t=>t.reading=false);duck(false)}
+
+/* ================= KAMERA & HAND TRACKING ================= */
+async function startCam(){if(TS.cam)return true;
+ try{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw{name:"NoAPI"};
+  const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:{ideal:1280},height:{ideal:720}},audio:false});
+  TS.stream=s;$("#cam").srcObject=s;await $("#cam").play();TS.cam=true;document.body.classList.add("cam");
+  s.getVideoTracks()[0].onended=camLost;return true}
+ catch(e){TS.cam=false;const m={NotAllowedError:"Izin kamera ditolak. Izinkan kamera di pengaturan browser.",NotFoundError:"Kamera tidak ditemukan.",NotReadableError:"Kamera sedang dipakai aplikasi lain.",NoAPI:"Browser tidak mendukung kamera (gunakan HTTPS atau localhost)."};
+  TS.err=m[e.name]||"Kamera gagal dibuka ("+(e.name||"error")+").";return false}}
+function camLost(){TS.cam=false;TS.stream=null;document.body.classList.remove("cam");if(G.phase==="play"||G.phase==="count"){G.mode="touch";toast("Kamera terputus. Beralih ke mode sentuh, game tetap berjalan.")}else setStat("kamera terputus.")}
+async function loadTracker(){if(TS.lm)return true;if(TS.loading)return TS.loading;
+ TS.loading=(async()=>{try{const B="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14",m=await import(B+"/+esm"),fs=await m.FilesetResolver.forVisionTasks(B+"/wasm"),
+  mk=d=>m.HandLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",delegate:d},runningMode:"VIDEO",numHands:4});
+  try{TS.lm=await mk("GPU")}catch(e){TS.lm=await mk("CPU")}return true}catch(e){TS.lm=null;return false}finally{TS.loading=null}})();return TS.loading}
+// Loop tracking: ujung telunjuk = landmark 8. Pemetaan memperhitungkan mirror + crop object-fit:cover.
+function track(){requestAnimationFrame(track);const v=$("#cam");if(!TS.lm||!TS.cam||v.readyState<2||v.currentTime===TS.lastT)return;TS.lastT=v.currentTime;
+ let r;try{r=TS.lm.detectForVideo(v,performance.now())}catch(e){return}
+ const W=innerWidth,H=innerHeight,vw=v.videoWidth,vh=v.videoHeight,s=Math.max(W/vw,H/vh),now=performance.now(),used=[false,false];
+ for(const h of r.landmarks){const p=h[8],x=(1-p.x)*vw*s-(vw*s-W)/2,y=p.y*vh*s-(vh*s-H)/2,z=x<W/2?0:1; // zona kiri/kanan independen
+  if(used[z])continue;used[z]=true;const q=TS.ptr[z];if(now-q.t>300){q.x=x;q.y=y}else{q.x+=(x-q.x)*.35;q.y+=(y-q.y)*.35}q.t=now}
+ const show=TS.test||(G.phase==="play"&&G.mode==="gesture");
+ $("#ptrs").querySelectorAll("i").forEach((d,i)=>{const q=TS.ptr[i],on=show&&now-q.t<250;d.style.display=on?"block":"none";if(on){d.style.left=q.x+"px";d.style.top=q.y+"px"}});
+ if(TS.test)setStat((used[0]||used[1])?"tangan terdeteksi ✓ (titik kuning = kiri, biru = kanan)":"kamera aktif, belum ada tangan terlihat.")}
+const seen=i=>performance.now()-TS.ptr[i].t<250;
+
+/* ================= GAME_LOGIC ================= */
+function mkTeam(i,name){const qs=[0,1,2].map(l=>shuf(QUESTIONS_DATA[i?"biru":"hijau"].filter(q=>q[2]===l))).flat().map(r=>({id:r[0],k:r[1],d:r[2],q:r[3],a:r[4],w:r[5],e:r[6]}));
+ return{i,name,qs,idx:0,score:0,shown:0,hp:100,ok:0,ct:0,el:0,fin:0,time:TIME,locked:false,done:false,fbT:0,reading:false,rt:0,leaves:[],dw:{leaf:-1,t:0,miss:0},zh:300,ui:null,q:null}}
+function hardReset(){G.timers.forEach(clearTimeout);G.timers=[];readAll();G.paused=false;G.phase="home";document.querySelectorAll(".cf,.pt").forEach(e=>e.remove());
+ ["#pz","#count","#result","#arena","#ctl"].forEach(s=>$(s).classList.add("hide"));$("#arena").innerHTML="";G.teams=[];$("#ptrs").querySelectorAll("i").forEach(d=>d.style.display="none");duck(false)}
+function startGame(){hardReset();G.teams=[mkTeam(0,$("#n0").value.trim()||"Tim Hijau"),mkTeam(1,$("#n1").value.trim()||"Tim Biru")];buildArena();
+ $("#home").classList.add("hide");$("#arena").classList.remove("hide");$("#ctl").classList.remove("hide");TS.test=false;G.phase="count";
+ const c=$("#count");c.classList.remove("hide");["3","2","1","Mulai!"].forEach((s,i)=>G.timers.push(setTimeout(()=>{c.textContent=s;c.style.fontSize=s.length>1?"7rem":"12rem";if(i===3)G.timers.push(setTimeout(()=>{c.classList.add("hide");G.phase="play";G.teams.forEach(startQ)},600))},i*900)))}
+function startQ(t){const q=t.q=t.qs[t.idx],u=t.ui;t.time=0;t.locked=false;t.fbT=0;t.dw={leaf:-1,t:0,miss:0};t.rt=0;
+ u.zone.innerHTML="";u.qc.classList.remove("qin");void u.qc.offsetWidth;u.qc.classList.add("qin");
+ u.meta.textContent=`Soal ${t.idx+1}/${TOTAL} · ${LV[q.d]} · ${q.k}`;u.qt.textContent=q.q;
+ t.leaves=shuf([q.a,...q.w]).map((o,i)=>{const d=document.createElement("div");d.className="leaf";d.style.left=(i%2?58:12)+"%";d.style.top=(i<2?9:45)+"%";
+  d.innerHTML='<svg class="lf" viewBox="0 0 200 120" preserveAspectRatio="none"><path class="f" d="M6 60C40 -6 150 -14 196 60 150 134 40 126 6 60Z"/><path class="v" d="M6 60H190M70 60L105 22M70 60L105 98M120 60L150 34M120 60L150 86"/></svg><b class="lt"></b><span class="lx"></span><svg class="ring" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18"/></svg>';
+  d.querySelector(".lt").textContent="ABCD"[i];d.querySelector(".lx").textContent=o;d.addEventListener("click",()=>{if(G.mode==="touch")pick(t,i)});u.zone.appendChild(d);
+  return{i,o,el:d,age:G.reduce?9:-i*.35,ph:Math.random()*6,rate:1,ring:d.querySelector(".ring"),rc:d.querySelector(".ring circle")}});
+ const fb=document.createElement("div");fb.className="fb";fb.innerHTML="<span></span><button>Lanjut</button>";fb.querySelector("button").style.display="none";fb.querySelector("button").onclick=()=>next(t);u.zone.appendChild(fb);u.fb=fb;
+ fb.firstChild.textContent=G.mode==="gesture"?"Tunjuk satu daun dengan telunjuk selama 3 detik.":"Ketuk daun jawaban yang menurutmu benar.";
+ t.zh=u.zone.clientHeight;if(G.auto)say(t,q.q+". "+t.leaves.map(l=>"Pilihan "+"ABCD"[l.i]+". "+l.o).join(". "))}
+function showFb(t,msg,tag){const f=t.ui.fb;f.firstChild.textContent=(tag?tag+" ":"")+msg;f.querySelector("button").style.display="block";t.fbT=4.5}
+function mark(t,chosen){t.leaves.forEach(l=>{if(l.o===t.q.a)l.el.classList.add("good");else if(l.i===chosen)l.el.classList.add("bad")})}
+function pick(t,i){if(t.locked||t.done||G.paused||G.phase!=="play")return;t.locked=true;cancelRead(t);t.dw={leaf:-1,t:0,miss:0};t.leaves.forEach(l=>l.ring.style.opacity=0);
+ const L=t.leaves[i],q=t.q;mark(t,i);
+ if(L.o===q.a){const b=Math.round(50*Math.max(0,TIME-t.time)/TIME);t.score+=100+b;t.ok++;t.ct+=t.time;sfx("ok");burst(L.el);showFb(t,"Hebat! "+q.e,`+${100+b} poin (bonus ${b}).`)}
+ else{t.hp=Math.max(0,t.hp-10);sfx("bad");showFb(t,`Belum tepat. Jawaban benar: "${q.a}". ${q.e}`,"-10 HP.")}hud(t)}
+function timeout(t){t.locked=true;cancelRead(t);t.hp=Math.max(0,t.hp-5);t.time=0;mark(t,-1);sfx("to");showFb(t,`Jangan khawatir, coba lagi di soal berikutnya. Jawaban benar: "${t.q.a}". ${t.q.e}`,"Waktu habis, -5 HP.");hud(t)}
+function next(t){if(t.done||t.fbT<=0&&!t.locked)return;t.fbT=0;t.idx++;if(t.idx>=TOTAL){t.done=true;t.fin=t.el;cancelRead(t);t.ui.zone.innerHTML=`<div class="fb" style="top:25%;bottom:auto;justify-content:center;text-align:center">Selesai! Skor ${t.score}. Menunggu tim lain menyelesaikan soal...</div>`;t.ui.qt.textContent="Semua soal selesai 🌳";t.ui.meta.textContent="";
+  if(G.teams.every(x=>x.done))G.timers.push(setTimeout(showResult,900));return}startQ(t)}
+function tick(t,dt){const now=t.shown;t.shown+=(t.score-t.shown)*Math.min(1,dt*7);if(Math.abs(t.score-t.shown)<.5)t.shown=t.score;if(Math.round(now)!==Math.round(t.shown))t.ui.sc.textContent=Math.round(t.shown);
+ if(t.done)return;t.el+=dt;animate(t,dt);
+ if(t.fbT>0){t.fbT-=dt;if(t.fbT<=0)next(t);return}if(t.locked)return;
+ if(t.reading){t.rt+=dt;if(t.rt>40)cancelRead(t)}else t.time+=dt; // stopwatch (tanpa batas waktu), dijeda saat soal dibacakan
+
+
+ const sec=Math.ceil(t.time);if(t.ui.tm.dataset.v!=sec||t.ui.tm.dataset.r!=t.reading){t.ui.tm.dataset.v=sec;t.ui.tm.dataset.r=t.reading;t.ui.tm.textContent=(t.reading?"⏸ ":"")+sec+"s";t.ui.tm.classList.toggle("low",sec<=5)}
+ const u=t.ui;u.st.textContent=G.mode==="touch"?"Mode sentuh":(seen(t.i)?"Tangan terdeteksi":"Tangan belum terlihat. Dekatkan tangan ke kamera.");
+ if(G.mode!=="gesture")return;
+ // ---- Tunjuk 3 detik: progres kontinu, toleransi jitter 0,15 dtk ----
+ let h=-1;if(seen(t.i)){const p=TS.ptr[t.i],zr=u.zone.getBoundingClientRect();if(p.y>=zr.top)t.leaves.forEach(l=>{if(l.age<.5)return;const r=l.el.getBoundingClientRect();if(p.x>=r.left&&p.x<=r.right&&p.y>=r.top&&p.y<=r.bottom)h=l.i})}
+ const d=t.dw;
+ if(h>=0&&h===d.leaf){d.t+=dt;d.miss=0}else if(d.leaf>=0&&d.miss<.15){d.miss+=dt}else{d.leaf=h;d.t=0;d.miss=0}
+ t.leaves.forEach(l=>{const on=l.i===d.leaf&&d.t>0;l.ring.style.opacity=on?1:0;if(on)l.rc.style.strokeDashoffset=113.1*(1-Math.min(1,d.t/3))});
+ if(d.leaf>=0&&d.t>=3)pick(t,d.leaf)}
+function animate(t,dt){const zh=t.zh;t.leaves.forEach(l=>{const tgt=(t.dw.leaf===l.i&&!t.locked)?.1:1;l.rate+=(tgt-l.rate)*Math.min(1,dt*8);l.age+=dt*l.rate;l.ph+=dt*l.rate*1.3;
+ const p=Math.max(0,Math.min(1,l.age/3.2)),e=1-(1-p)**2,a=G.reduce?0:5+16*(1-p);
+ l.el.style.transform=`translate(${Math.sin(l.ph)*a}px,${-(1-e)*zh*1.05}px) rotate(${G.reduce?0:Math.sin(l.ph*.9)*8}deg)`})}
+function loop(now){requestAnimationFrame(loop);const dt=Math.min(.1,(now-(loop.l||now))/1000);loop.l=now;if(G.phase!=="play"||G.paused)return;G.teams.forEach(t=>tick(t,dt))}
+
+/* ================= UI_RENDER ================= */
+function hud(t){const u=t.ui;u.tn.textContent=t.name;u.hp.style.width=t.hp+"%";u.hp.style.background=t.hp>50?"#7bd54a":t.hp>25?"#ffb300":"#ff6b4a";u.hpn.textContent="HP "+t.hp}
+function buildArena(){const A=$("#arena");A.innerHTML="";G.teams.forEach((t,i)=>{const p=document.createElement("section");p.className="panel "+(i?"b":"g");
+ p.innerHTML='<svg class="branch" viewBox="0 0 400 44" preserveAspectRatio="none"><path d="M0 14Q100 34 200 12T400 20L400 8Q300 24 200 4T0 4Z" fill="#6b4423" opacity=".9"/><g fill="#3fa34d"><ellipse cx="60" cy="26" rx="16" ry="7"/><ellipse cx="190" cy="22" rx="16" ry="7"/><ellipse cx="320" cy="26" rx="16" ry="7"/></g></svg><div class="hd"><b class="tn"></b><span class="sc">0</span><span class="hpn"></span><div class="hp"><i></i></div><span class="tm"></span></div><div class="qc"><div class="meta"></div><p class="qt"></p><div class="rd"><button class="s r1">Dengarkan Soal</button><button class="s r2">Dengarkan Pilihan</button></div></div><div class="zone"></div><div class="st"></div>';
+ A.appendChild(p);const q=s=>p.querySelector(s);t.ui={tn:q(".tn"),sc:q(".sc"),hp:q(".hp i"),hpn:q(".hpn"),tm:q(".tm"),qc:q(".qc"),meta:q(".meta"),qt:q(".qt"),zone:q(".zone"),st:q(".st")};
+ q(".r1").onclick=()=>t.q&&!t.locked&&say(t,t.q.q);q(".r2").onclick=()=>t.q&&!t.locked&&say(t,t.leaves.map(l=>"Pilihan "+"ABCD"[l.i]+". "+l.o).join(". "));hud(t)})}
+function burst(el){if(G.reduce)return;const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;for(let i=0;i<12;i++){const s=document.createElement("i");s.className="pt";s.style.left=cx+"px";s.style.top=cy+"px";s.style.setProperty("--dx",(Math.random()*160-80)+"px");s.style.setProperty("--dy",(Math.random()*-120-20)+"px");document.body.appendChild(s);setTimeout(()=>s.remove(),900)}}
+function confetti(){if(G.reduce)return;const C=["#7bd54a","#ffd24a","#ff9f1c","#4fc3f7","#2f9e44"];for(let i=0;i<55;i++){const c=document.createElement("i");c.className="cf";c.style.left=Math.random()*100+"vw";c.style.background=C[i%5];c.style.animationDuration=3+Math.random()*3+"s";c.style.animationDelay=-Math.random()*5+"s";document.body.appendChild(c)}}
+const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+function showResult(){G.phase="end";readAll();const[a,b]=G.teams;let w=null;
+ if(a.score!==b.score)w=a.score>b.score?a:b;else if(a.ok!==b.ok)w=a.ok>b.ok?a:b;else if(Math.abs(a.ct-b.ct)>.01)w=a.ct<b.ct?a:b;
+ $("#arena").classList.add("hide");$("#ctl").classList.add("hide");$("#ptrs").querySelectorAll("i").forEach(d=>d.style.display="none");
+ const card=t=>{const acc=Math.round(t.ok/TOTAL*100),st=acc>=80?3:acc>=50?2:1,ti=acc>=80?"Penjaga Ekosistem":acc>=50?"Penjelajah Rimba":"Calon Ranger Hutan";
+  return`<div class="card${t===w?" w":""}"><h2></h2><p style="font-size:2rem;color:#2f7d32">${t.score} poin</p><p>HP akhir: ${t.hp} · Benar: ${t.ok}/${TOTAL}</p><p>Akurasi: ${acc}% · Waktu: ${fmt(t.fin)}</p><span class="badge">${"★".repeat(st)}${"☆".repeat(3-st)}</span><p>${ti}</p></div>`};
+ const R=$("#result");R.innerHTML=`<h1>${w?"Pemenang: ":"Hasil Imbang!"}<span id="wn"></span></h1><div class="cards">${card(a)}${card(b)}</div>
+ <div class="sum"><b>Ringkasan materi:</b><br>• Produsen membuat makanan sendiri; konsumen memakan makhluk hidup lain.<br>• Predator memburu mangsa.<br>• Anak panah rantai makanan = arah perpindahan energi.<br>• Energi makin berkurang di tiap tingkat; perubahan satu populasi memengaruhi yang lain.</div>
+ <div class="row"><button class="big" id="rA">Main Lagi</button><button class="s" id="rH">Kembali ke Beranda</button></div>`;
+ R.querySelectorAll("h2")[0].textContent=a.name;R.querySelectorAll("h2")[1].textContent=b.name;if(w)$("#wn").textContent=w.name+" 🏆";
+ R.classList.remove("hide");$("#rA").onclick=startGame;$("#rH").onclick=goHome;confetti();sfx("win")}
+function goHome(){hardReset();$("#home").classList.remove("hide")}
+
+/* ================= KONTROL ================= */
+function pause(p){if(G.phase!=="play")return;G.paused=p;$("#pz").classList.toggle("hide",!p);if(TT.ok)try{p?speechSynthesis.pause():speechSynthesis.resume()}catch(e){}}
+$("#cP").onclick=()=>pause(true);$("#zR").onclick=()=>pause(false);$("#zS").onclick=startGame;$("#zX").onclick=goHome;
+addEventListener("keydown",e=>{if(e.key==="Escape"&&(G.phase==="play"))pause(!G.paused)});
+$("#cM").onclick=()=>music(!AU.on);$("#bMus").onclick=()=>music(!AU.on);
+function setAuto(v){G.auto=v;$("#cAuto").checked=v;$("#cA").textContent="Baca Otomatis: "+(v?"Ya":"Tidak")}
+$("#cA").onclick=()=>{setAuto(!G.auto);if(!G.auto)readAll()};$("#cAuto").onchange=e=>setAuto(e.target.checked);
+$("#cRm").checked=G.reduce;document.body.classList.toggle("rm",G.reduce);$("#cRm").onchange=e=>{G.reduce=e.target.checked;document.body.classList.toggle("rm",G.reduce)};
+$("#bCam").onclick=async()=>{setStat("meminta izin kamera...");setStat(await startCam()?`kamera aktif ✓ (${$("#cam").videoWidth}×${$("#cam").videoHeight}).`:TS.err)};
+$("#bTest").onclick=async()=>{if(!await startCam())return setStat(TS.err);setStat("memuat pelacak tangan (butuh internet)...");
+ if(await loadTracker()){TS.test=true;setStat("tunjukkan telunjuk di depan kamera.")}else setStat("pelacak tangan gagal dimuat (cek internet). Game tetap bisa dimainkan dengan sentuhan.")};
+$("#bTouch").onclick=()=>{auInit();G.mode="touch";startGame();G.mode="touch"};
+$("#bGo").onclick=async()=>{auInit();const b=$("#bGo");b.disabled=true;b.textContent="Menyiapkan...";let mode="touch";
+ if(await startCam()){if(await loadTracker())mode="gesture";else toast("Pelacak tangan gagal dimuat. Beralih ke mode sentuh.")}else toast(TS.err+" Beralih ke mode sentuh.");
+ b.disabled=false;b.textContent="MULAI BATTLE!";startGame();G.mode=mode};
+addEventListener("resize",()=>G.teams.forEach(t=>t.ui&&(t.zh=t.ui.zone.clientHeight)));
+setAuto(false);requestAnimationFrame(loop);requestAnimationFrame(track);
+</script></body></html>
